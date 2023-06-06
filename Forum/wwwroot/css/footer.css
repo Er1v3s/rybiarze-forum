@@ -1,0 +1,19 @@
+﻿.footer {
+    display: flex;
+    justify-content: center;
+    padding: var(--margin-desktop);
+    width: 100%;
+    background-color: var(--default-elements-color);
+    text-align: center;
+    color: var(--default-text-color)
+}
+
+.footer h6 {
+    margin: 0;
+    font-size: var(--small-font-size)
+}
+
+.footer a {
+    color: navajowhite;
+    text-decoration: none;
+}

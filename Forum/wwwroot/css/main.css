@@ -1,4 +1,9 @@
-﻿main.main {
+﻿.page {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.main {
     margin-top:100px;
 }
 

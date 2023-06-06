@@ -1,7 +1,8 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 @import "variables.css";
-@import "main.css";
 @import "nav.css";
+@import "main.css";
+@import "footer.css";
 
 html, body {
     font-family: Nunito, 'Helvetica Neue', Helvetica, Arial, sans-serif;
