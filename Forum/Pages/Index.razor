@@ -5,15 +5,17 @@
 <div class="container">
     @foreach (var post in posts)
     {
+        <a href="/article/@post.Id">
         <div class="row">
             <div class="col-4">
                 <img src="./img/articleMainImages/@post.Image" class="w-100"/>
             </div>
-            <div class="col-8">
-                <h1>Title</h1>
+            <div class="col-8 post-front-page">
+                <h1>@post.Title</h1>
                 <p>@post.Introduction</p>
             </div>
         </div>
+        </a>
 
         <hr/>
         <br/>
@@ -27,7 +29,7 @@
 @inject IConfiguration configuration;
 @code {
     private AppDbContext _context;
-    public List<Post> posts;
+    public List<Forum.Data.Post> posts;
 
     protected override async Task OnInitializedAsync()
     {

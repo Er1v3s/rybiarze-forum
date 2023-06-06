@@ -1,0 +1,29 @@
+﻿@page "/article/{id:int}"
+
+<h3>Post</h3>
+<p>@id</p>
+
+<div class="container">
+    <div class="row">
+        <img class="w-100" src="./img/articleMainImages/@post.Image"/>
+
+            <h1>@post.Title</h1>
+            <p>@post.Introduction</p>
+            <h3>@post.BodyText</h3>
+    </div>
+</div>
+
+@using Forum.Data;
+@inject IConfiguration configuration;
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private AppDbContext _context;
+    public Forum.Data.Post post;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _context = new AppDbContext(configuration);
+        post = _context.Posts.Where(x => x.Id == id).FirstOrDefault();
+    }
+}
