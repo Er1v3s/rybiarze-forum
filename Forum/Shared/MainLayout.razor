@@ -3,11 +3,29 @@
 <PageTitle>Forum</PageTitle>
 
 <div class="page">
-    <main>
-        <div class="top-row px-4">
+    <nav class="nav">
+        <div class="nav__container">
+            <div class="nav__logo">
+                <a href="/">
+                    <img src="img/logo-white.svg" alt="logo sklepu">
+                </a>
+            </div>
+            
+            <div class="nav__search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Wyszukaj..." />
+            </div>
 
+            <div class="nav__account">
+                <a href="/user-account">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Twoje konto</span>
+                </a>
+            </div>
         </div>
+    </nav>
 
+    <main class="main">
         <article class="content px-4">
             @Body
         </article>
