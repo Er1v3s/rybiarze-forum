@@ -1,5 +1,5 @@
 ﻿.nav {
-    height: 100px;
+    height: 70px;
     position: fixed;
     display: flex;
     justify-content: center;
@@ -20,15 +20,15 @@
 
 .nav__logo {
     width: 200px;
-    height: 100px;
+    height: 70px;
     overflow: hidden;
     transition: 0.3s;
     cursor: pointer;
 }
 
 .nav__logo img {
-    width: 200px;
-    height: 120px;
+    width: 170px;
+    height: 90px;
 }
 
 .nav__search-bar{
@@ -86,12 +86,12 @@
 
     .nav__logo {
         width: 150px;
-        height: 100px;
+        height: 70px;
     }
 
     .nav__logo img {
         width: 150px;
-        height: 100px;
+        height: 90px;
     }
 
     .nav__search-bar {

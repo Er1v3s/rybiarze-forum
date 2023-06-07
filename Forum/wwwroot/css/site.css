@@ -3,6 +3,7 @@
 @import "nav.css";
 @import "main.css";
 @import "footer.css";
+@import "button.css";
 
 html, body {
     font-family: Nunito, 'Helvetica Neue', Helvetica, Arial, sans-serif;

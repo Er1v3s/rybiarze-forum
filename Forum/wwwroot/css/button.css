@@ -1,0 +1,40 @@
+﻿.add-post-btn {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: var(--xlarge-font-size);
+    border: 3px solid var(--default-elements-color);
+    position: fixed;
+    bottom: 50px;
+    right: 20px;
+    background-color: transparent;
+    transition: 0.3s;
+}
+
+.add-post-btn span {
+    position: absolute;
+    font-size: var(--large-font-size);
+    transform: scale(0);
+    font-weight: 700;
+    margin-left: 40px;
+}
+
+.add-post-btn:hover span {
+    transition: 0.4s ease-in;
+    transition-delay: 0.1s;
+    transform: scale(1);
+}
+
+.add-post-btn:hover {
+    width: 190px;
+    border-radius: 50px;
+    justify-content:left;
+}
+
+
+.add-post-btn: {
+    background-color: blue;
+} 
