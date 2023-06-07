@@ -71,12 +71,18 @@
 }
 
 .nav__account span {
-    display: inline-block;
+    font-size: var(--medium-font-size);
+    height: 100%;
+    line-height: 36px;
 }
 
 .nav__account a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
     text-decoration: none;
-    color: var(--default-text-color)
+    color: var(--default-text-color);
 }
 
 @media (max-width: 768px) {

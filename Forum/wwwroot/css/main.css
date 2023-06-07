@@ -15,13 +15,13 @@ a {
 .post-front-page h1 {
     font-size: 40px;
     font-weight: bold;
-    color: black;
+    color: var(--default-elements-color);
     text-decoration: none;
 }
 
 .post-front-page p {
     font-size: 16px;
-    color: black;
+    color: var(--default-elements-color);
     text-decoration: none;
 }
 
@@ -29,4 +29,30 @@ a {
     width: 100%;
     max-width: 200px;
     max-height: 200px;
+    border-radius: 10px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: end;
+    color: #9f9f9f;
+}
+
+.info div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.avatar img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.info h6 {
+    margin: 0;
+    line-height: 50px;
 }
