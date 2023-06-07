@@ -1,8 +1,18 @@
+using Forum.Areas.Identity.Data;
 using Forum.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("ForumContextConnection") ?? throw new InvalidOperationException("Connection string 'ForumContextConnection' not found.");
+
+builder.Services.AddDbContext<ForumContext>(options =>
+    options.UseSqlServer(connectionString));
+
+builder.Services.AddDefaultIdentity<ForumUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ForumContext>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -26,5 +36,6 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+app.UseAuthentication();;
 
 app.Run();
