@@ -1,28 +1,15 @@
 ﻿@page "/article/{id:int}"
 
+<h3>Post</h3>
+<p>@id</p>
+
 <div class="container">
     <div class="row">
-        <img class="post-card-img" src="./img/articleMainImages/@post.Image"/>
-        <div class="text">
-            <div class="info">
-                <time>12:51 07.06.2023r.</time>
-            </div>
+        <img class="w-100" src="./img/articleMainImages/@post.Image"/>
 
             <h1>@post.Title</h1>
-            <hr/>
-            <h3>@post.Introduction</h3>
-            <hr/>
-            <p>@post.BodyText</p>
-
-            <div class="info">
-                <div>
-                    <div class="avatar">
-                        <img src="img/articleMainImages/sum.webp" />
-                    </div>
-                    <h6>Filip Statkiewicz</h6>
-                </div>
-            </div>
-        </div>
+            <p>@post.Introduction</p>
+            <h3>@post.BodyText</h3>
     </div>
 </div>
 

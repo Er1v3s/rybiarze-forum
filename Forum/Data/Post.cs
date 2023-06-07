@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic.CompilerServices;
-
-namespace Forum.Data
+﻿namespace Forum.Data
 {
     public class Post
     {
@@ -9,7 +7,5 @@ namespace Forum.Data
         public string Introduction{ get; set; }
         public string BodyText { get; set; }
         public string Image { get; set; }
-
-        //public DateType CreationDate { get; set; }
     }
 }
