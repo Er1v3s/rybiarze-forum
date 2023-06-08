@@ -1,19 +1,29 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Forum.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<ForumUser>
     {
-        protected readonly IConfiguration Configuration;
-
-        public AppDbContext(IConfiguration configuration)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            Configuration = configuration;
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DatabaseConnection"));
+            base.OnModelCreating(builder);
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.ForumUser)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.ForumUserId)
+                .IsRequired();
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.Post)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.PostId)
+                .IsRequired();
         }
 
         public DbSet<Post> Posts { get; set; }

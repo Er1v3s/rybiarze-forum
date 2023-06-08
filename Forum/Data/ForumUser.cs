@@ -9,5 +9,6 @@ namespace Forum.Data;
 // Add profile data for application users by adding properties to the ForumUser class
 public class ForumUser : IdentityUser
 {
+    public ICollection<Comment> Comments { get; set; }
 }
 

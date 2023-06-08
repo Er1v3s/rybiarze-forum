@@ -5,13 +5,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection") ?? throw new InvalidOperationException("Connection string 'DatabaseConnection' not found.");
 
-builder.Services.AddDbContext<ForumContext>(options =>
-    options.UseSqlServer(connectionString));
-
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
 builder.Services.AddDefaultIdentity<ForumUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ForumContext>();
+    .AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddScoped<AppDbContext>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();

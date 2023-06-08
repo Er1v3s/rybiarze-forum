@@ -9,7 +9,7 @@ namespace Forum.Data
         public string Introduction{ get; set; }
         public string BodyText { get; set; }
         public string Image { get; set; }
-
-        //public DateType CreationDate { get; set; }
+        public DateTime Created { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 }

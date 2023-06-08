@@ -9,6 +9,7 @@ namespace Forum.Data
         public string ForumUserId { get; set; }
         public string CommentText { get; set; }
         public DateTime Created { get; set; }
-
+        public ForumUser ForumUser { get; set; }
+        public Post Post { get; set; }
     }
 }

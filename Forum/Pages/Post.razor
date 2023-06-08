@@ -32,7 +32,7 @@
                 
                 @if (SignInManager.IsSignedIn(currentUser))
                 {
-                    <EditForm Model="@commentModel" OnValidSubmit="@addComment">
+                    <EditForm Model="@commentModel" OnValidSubmit="@AddComment">
                         <InputTextArea class="inputTextArea" @bind-Value="@commentModel.CommentText" />
                         <button type="submit" class="btn btn-primary">Add Comment</button>
                     </EditForm>
@@ -44,18 +44,14 @@
                 
             </div>
             <div class="comments">
-                <div class="comment">
-                    <h5>Username</h5>
-                    <time>2023-03-14 11:55:41</time>
-                    <p>This is the comment</p>
-                </div>
-                
-                <div class="comment">
-                    <h5>Username</h5>
-                    <time>2023-03-14 11:55:41</time>
-                    <p>This is the comment</p>
-                </div>
-
+                @foreach (var comment in post.Comments)
+                {
+                    <div class="comment">
+                        <h5>@Regex.Replace(@comment.ForumUser.UserName, RegExpPattern, "")</h5>
+                        <time>@comment.Created</time>
+                        <p>@comment.CommentText</p>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -64,21 +60,23 @@
 @using Forum.Data;
 @using Microsoft.AspNetCore.Identity
 @using System.Security.Claims
-@inject IConfiguration configuration;
+@using System.Text.RegularExpressions
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext _context
 @inject AuthenticationStateProvider authenticationStateProvider
 @code {
     [Parameter]
     public int id { get; set; }
-    private AppDbContext _context;
     public Forum.Data.Post post;
     public Comment commentModel = new Comment();
     public ClaimsPrincipal currentUser  { get; set; }
     public string UserId { get; set; }
 
+    string RegExpPattern = @"@.*$";
+
     protected override async Task OnInitializedAsync()
     {
-        _context = new AppDbContext(configuration);
-        post = _context.Posts.Where(x => x.Id == id).FirstOrDefault();
+        getPost();
 
         var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
         currentUser = authState.User;
@@ -89,7 +87,16 @@
         }
     }
 
-    public async Task addComment()
+    public async Task getPost()
+    {
+        post = _context.Posts
+            .Where(x => x.Id == id)
+            .Include(c => c.Comments)
+            .ThenInclude(f => f.ForumUser)
+            .FirstOrDefault();
+    }
+
+    public async Task AddComment()
     {
         commentModel.ForumUserId = UserId;
         commentModel.PostId = id;
@@ -99,5 +106,8 @@
         await _context.SaveChangesAsync();
 
         commentModel = new Comment();
+
+        getPost();
+        StateHasChanged();
     }
 }

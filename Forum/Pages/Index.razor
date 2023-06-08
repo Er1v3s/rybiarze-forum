@@ -31,14 +31,12 @@
 </div>
 
 @using Forum.Data;
-@inject IConfiguration configuration;
+@inject AppDbContext _context;
 @code {
-    private AppDbContext _context;
     public List<Forum.Data.Post> posts;
 
     protected override async Task OnInitializedAsync()
     {
-        _context = new AppDbContext(configuration);
         posts = _context.Posts.ToList();
     }
 }
