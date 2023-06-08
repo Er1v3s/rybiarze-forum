@@ -1,4 +1,7 @@
-﻿@inject SignInManager<ForumUser> SignInManager
+﻿@using Forum.Data
+@using Forum.Pages.Account.Manage
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@inject SignInManager<ForumUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }

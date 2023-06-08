@@ -1,4 +1,3 @@
-using Forum.Areas.Identity.Data;
 using Forum.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
