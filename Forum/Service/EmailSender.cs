@@ -16,7 +16,7 @@ namespace Forum.Service
             message.Body = "<a href='" + message1 + "'>Click here to confirm your email</a>";
 
             smtpClient.Port = 587;
-            smtpClient.Host = "sandbox.smtp.mailtrap.io";
+            smtpClient.Host = "smtp.gmail.com";
             smtpClient.EnableSsl = true;
             smtpClient.UseDefaultCredentials = false;
             smtpClient.Credentials = new NetworkCredential("edc6cddc1e2802", "822df5a285b77a");

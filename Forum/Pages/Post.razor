@@ -1,5 +1,8 @@
 ﻿@page "/article/{id:int}"
 
+@inject SignInManager<ForumUser> SignInManager
+@inject UserManager<ForumUser> UserManager
+
 <div class="container">
     <div class="row">
         <img class="post-card-img" src="./img/articleMainImages/@post.Image"/>
@@ -12,7 +15,7 @@
             <hr/>
             <h3>@post.Introduction</h3>
             <hr/>
-            <p>@post.BodyText</p>
+            <p>@((MarkupString)post.BodyText)</p>
 
             <div class="info">
                 <div>
@@ -22,21 +25,79 @@
                     <h6>Filip Statkiewicz</h6>
                 </div>
             </div>
+            
+            <hr/>
+            <div class="AddCommentContainer">
+                <h3>Add Comment</h3>
+                
+                @if (SignInManager.IsSignedIn(currentUser))
+                {
+                    <EditForm Model="@commentModel" OnValidSubmit="@addComment">
+                        <InputTextArea class="inputTextArea" @bind-Value="@commentModel.CommentText" />
+                        <button type="submit" class="btn btn-primary">Add Comment</button>
+                    </EditForm>
+                }
+                else
+                {
+                    <p>You have to be logged in before you can comment.</p>
+                }
+                
+            </div>
+            <div class="comments">
+                <div class="comment">
+                    <h5>Username</h5>
+                    <time>2023-03-14 11:55:41</time>
+                    <p>This is the comment</p>
+                </div>
+                
+                <div class="comment">
+                    <h5>Username</h5>
+                    <time>2023-03-14 11:55:41</time>
+                    <p>This is the comment</p>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>
 
 @using Forum.Data;
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
 @inject IConfiguration configuration;
+@inject AuthenticationStateProvider authenticationStateProvider
 @code {
     [Parameter]
     public int id { get; set; }
     private AppDbContext _context;
     public Forum.Data.Post post;
+    public Comment commentModel = new Comment();
+    public ClaimsPrincipal currentUser  { get; set; }
+    public string UserId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         _context = new AppDbContext(configuration);
         post = _context.Posts.Where(x => x.Id == id).FirstOrDefault();
+
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        currentUser = authState.User;
+
+        @if (SignInManager.IsSignedIn(currentUser))
+        {
+            UserId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+    }
+
+    public async Task addComment()
+    {
+        commentModel.ForumUserId = UserId;
+        commentModel.PostId = id;
+        commentModel.Created = DateTime.Now;
+
+        _context.Comments.Add(commentModel);
+        await _context.SaveChangesAsync();
+
+        commentModel = new Comment();
     }
 }

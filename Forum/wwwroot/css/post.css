@@ -19,3 +19,40 @@
     background-color: white;
     margin-bottom: 30px;
 }
+
+.AddCommentContainer {
+    padding: 30px;
+    background-color: antiquewhite;
+}
+
+.AddCommentContainer .inputTextArea {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    height: 100px;
+    margin-bottom: 20px;
+}
+
+.AddCommentContainer button {
+    display: block
+    border-radius: 20px;
+}
+
+.comments {
+    width: 100%;
+    display:block;
+}
+
+.comment {
+    padding: 10px;
+}
+
+.comments h5 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.comments p {
+    font-size: 16px;
+}
