@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("ForumContextConnection") ?? throw new InvalidOperationException("Connection string 'ForumContextConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection") ?? throw new InvalidOperationException("Connection string 'DatabaseConnection' not found.");
 
 builder.Services.AddDbContext<ForumContext>(options =>
     options.UseSqlServer(connectionString));

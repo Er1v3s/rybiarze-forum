@@ -82,7 +82,12 @@
     align-items: center;
     gap: 10px;
     text-decoration: none;
-    color: var(--default-text-color);
+    color: var(--default-text-color) !important; 
+}
+
+.nav__account form button i {
+    font-size: var(--large-font-size);
+    color: var(--default-text-color) !important; 
 }
 
 @media (max-width: 768px) {
