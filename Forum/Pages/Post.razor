@@ -19,42 +19,36 @@
 
             <div class="info">
                 <div>
-                    <div class="avatar">
-                        <img src="img/articleMainImages/sum.webp" />
-                    </div>
                     <h6>Filip Statkiewicz</h6>
                 </div>
             </div>
-            
-            <hr/>
-            <div class="AddCommentContainer">
-                <h3>Add Comment</h3>
-                
-                @if (SignInManager.IsSignedIn(currentUser))
-                {
-                    <EditForm Model="@commentModel" OnValidSubmit="@AddComment">
-                        <InputTextArea class="inputTextArea" @bind-Value="@commentModel.CommentText" />
-                        <button type="submit" class="btn btn-primary">Add Comment</button>
-                    </EditForm>
-                }
-                else
-                {
-                    <p>You have to be logged in before you can comment.</p>
-                }
-                
-            </div>
-            <div class="comments">
-                @foreach (var comment in post.Comments)
-                {
-                    <div class="comment">
-                        <h5>@Regex.Replace(@comment.ForumUser.UserName, RegExpPattern, "")</h5>
-                        <time>@comment.Created</time>
-                        <p>@comment.CommentText</p>
-                    </div>
-                }
-            </div>
         </div>
-    </div>
+        <div class="AddCommentContainer">
+            <h3>Dodaj komentarz</h3>
+                
+            @if (SignInManager.IsSignedIn(currentUser))
+            {
+                <EditForm Model="@commentModel" OnValidSubmit="@AddComment">
+                    <InputTextArea class="inputTextArea" @bind-Value="@commentModel.CommentText" />
+                    <button type="submit" class="btn btn-primary">Dodaj komentarz</button>
+                </EditForm>
+            }
+            else
+            {
+                <p>You have to be logged in before you can comment.</p>
+            }
+                
+        </div>
+
+        @foreach (var comment in post.Comments)
+            {
+                <div class="comment">
+                    <h5>@Regex.Replace(@comment.ForumUser.UserName, RegExpPattern, "")</h5>
+                    <time>@comment.Created</time>
+                    <p>@comment.CommentText</p>
+                </div>
+            }
+        </div>
 </div>
 
 @using Forum.Data;
