@@ -1,7 +1,13 @@
-﻿@page "/article/{id:int}"
-
+﻿@using Forum.Data;
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using System.Text.RegularExpressions
+@inject AppDbContext _context
+@inject AuthenticationStateProvider authenticationStateProvider
 @inject SignInManager<ForumUser> SignInManager
-@inject UserManager<ForumUser> UserManager
+
+@page "/article/{id:int}"
 
 <div class="container">
     <div class="row">
@@ -23,6 +29,7 @@
                 </div>
             </div>
         </div>
+
         <div class="AddCommentContainer">
             <h3>Dodaj komentarz</h3>
                 
@@ -37,30 +44,19 @@
             {
                 <p>Dodawanie komentarzy możliwe tylko dla zalogowanych użytkowników</p>
             }
-                
         </div>
 
         @foreach (var comment in post.Comments)
         {
             <div class="comment">
-                @if (comment.ForumUser != null)
-                {
-                    <h5>@Regex.Replace(@comment.ForumUser.UserName, @"@.*$", " ")</h5>
-                }
+                <h5>@Regex.Replace(@comment.ForumUser.UserName, @"@.*$", " ")</h5>
                 <time>@comment.Created</time>
-                <p>@comment.CommentText</p>
+                <p>@((MarkupString)comment.CommentText)</p>
             </div>
         }
         </div>
 </div>
 
-@using Forum.Data;
-@using Microsoft.AspNetCore.Identity
-@using System.Security.Claims
-@using System.Text.RegularExpressions
-@using Microsoft.EntityFrameworkCore
-@inject AppDbContext _context
-@inject AuthenticationStateProvider authenticationStateProvider
 @code {
     [Parameter]
     public int id { get; set; }
@@ -70,30 +66,6 @@
 
     public Comment commentModel = new Comment();
     public List<Forum.Data.Post> posts;
-
-    public async Task getPost()
-    {
-        post = _context.Posts
-            .Where(x => x.Id == id)
-            .Include(c => c.Comments)
-            .ThenInclude(f => f.ForumUser)
-            .FirstOrDefault();
-    }
-
-    public async Task AddComment()
-    {
-        commentModel.ForumUserId = UserId;
-        commentModel.PostId = id;
-        commentModel.Created = DateTime.Now;
-
-        _context.Comments.Add(commentModel);
-        await _context.SaveChangesAsync();
-
-        commentModel = new Comment();
-
-        await getPost();
-        StateHasChanged();
-    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,5 +78,38 @@
         {
             UserId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
         }
+    }
+
+    public async Task AddComment()
+    {
+
+        commentModel.ForumUserId = UserId;
+        commentModel.PostId = id;
+        commentModel.Created = DateTime.Now;
+
+        try
+        {
+            _context.Comments.Add(commentModel);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            await getPost();
+            StateHasChanged();
+            commentModel = new Comment();
+        }
+    }
+
+    public async Task getPost()
+    {
+        post = _context.Posts
+            .Where(x => x.Id == id)
+            .Include(c => c.Comments)
+            .ThenInclude(f => f.ForumUser)
+            .FirstOrDefault();
     }
 }

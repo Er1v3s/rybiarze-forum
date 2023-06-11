@@ -1,19 +1,9 @@
 ﻿@inherits LayoutComponentBase
-@using System.Security.Claims
 @using Forum.Data
+@using System.Security.Claims
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<ForumUser> SignInManager
 @inject AuthenticationStateProvider authenticationStateProvider
-
-@code {
-    public ClaimsPrincipal currentUser { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        currentUser = authState.User;
-    }
-}
 
 <PageTitle>Forum</PageTitle>
 
@@ -38,3 +28,14 @@
         </h6>
     </footer>
 </div>
+
+
+@code {
+    public ClaimsPrincipal currentUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        currentUser = authState.User;
+    }
+}

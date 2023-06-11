@@ -1,4 +1,12 @@
-﻿@page "/article/create-new-post"
+﻿@using Forum.Data
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject AppDbContext _context
+@inject NavigationManager NavigationManager
+@inject SignInManager<ForumUser> SignInManager
+@inject AuthenticationStateProvider authenticationStateProvider
+
+@page "/article/create-new-post"
 
 <div class="AddPostContainer container">
     <h3>Dodaj Post</h3>
@@ -21,12 +29,6 @@
     
 </div>
 
-@using Forum.Data
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Identity
-@inject AuthenticationStateProvider authenticationStateProvider
-@inject AppDbContext _context
-@inject SignInManager<ForumUser> SignInManager
 @code
 {
     public Forum.Data.Post postModel = new Data.Post();
@@ -47,13 +49,22 @@
 
     public async Task AddPostToDb()
     {
-        postModel.ForumUserId = UserId;
-        postModel.Created = DateTime.Now;
-        postModel.Image = "szczupak.webp";
+        try
+        {
+            postModel.ForumUserId = UserId;
+            postModel.Created = DateTime.Now;
+            postModel.Image = "szczupak.webp";
 
-        _context.Posts.Add(postModel);
-        await _context.SaveChangesAsync();
-
-        StateHasChanged();
+            _context.Posts.Add(postModel);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            NavigationManager.NavigateTo("/");
+        }
     }
 }

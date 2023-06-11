@@ -1,36 +1,45 @@
-﻿@page "/"
+﻿@using Forum.Data;
+@using Microsoft.EntityFrameworkCore
+@using System.Text.RegularExpressions
+@inject AppDbContext _context;
+
+@page "/"
 
 <PageTitle>Rybiarze - forum</PageTitle>
 
 <div class="container">
-    @foreach (var post in posts)
+    @try
     {
-        <a href="/article/@post.Id">
-            <div class="row">
-                <div class="col-2">
-                    <img class="post-img" src="./img/articleMainImages/@post.Image"/>
-                </div>
-                <div class="col-8 post-front-page">
-                    <h1>@post.Title</h1>
-                    <p>@post.Introduction</p>
-                </div>
-                <div class="col-2 info">
-                    <time>@post.Created</time>
-                    <div>
-                        <h6>@Regex.Replace(@post.ForumUser.UserName, @"@.*$", " ")</h6>
+        foreach (var post in posts)
+        {
+            <a href="/article/@post.Id">
+                <div class="row">
+                    <div class="col-2">
+                        <img class="post-img" src="./img/articleMainImages/@post.Image"/>
+                    </div>
+                    <div class="col-8 post-front-page">
+                        <h1>@post.Title</h1>
+                        <p>@post.Introduction</p>
+                    </div>
+                    <div class="col-2 info">
+                        <time>@post.Created</time>
+                        <div>
+                            <h6>@Regex.Replace(@post.ForumUser.UserName, @"@.*$", " ")</h6>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
 
-        <hr/>
+            <hr/>
+        }
+    }
+    catch (Exception ex)
+    {
+        <h1>Upsss... coś poszło nie tak, spróbuj tu wrócić za jakiś czas!</h1>
+        <h2>Błąd: @ex.Message</h2>
     }
 </div>
 
-@using Forum.Data;
-@using Microsoft.EntityFrameworkCore
-@using System.Text.RegularExpressions
-@inject AppDbContext _context;
 @code {
     public List<Forum.Data.Post> posts;
 
