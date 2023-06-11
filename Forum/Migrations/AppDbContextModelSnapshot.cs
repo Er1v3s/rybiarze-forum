@@ -133,6 +133,10 @@ namespace Forum.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ForumUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -146,6 +150,8 @@ namespace Forum.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ForumUserId");
 
                     b.ToTable("Posts");
                 });
@@ -302,6 +308,17 @@ namespace Forum.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("Forum.Data.Post", b =>
+                {
+                    b.HasOne("Forum.Data.ForumUser", "ForumUser")
+                        .WithMany("Posts")
+                        .HasForeignKey("ForumUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ForumUser");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -356,6 +373,8 @@ namespace Forum.Migrations
             modelBuilder.Entity("Forum.Data.ForumUser", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("Forum.Data.Post", b =>

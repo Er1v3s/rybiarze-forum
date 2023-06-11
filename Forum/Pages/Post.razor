@@ -8,7 +8,7 @@
         <img class="post-card-img" src="./img/articleMainImages/@post.Image"/>
         <div class="text">
             <div class="info">
-                <time>12:51 07.06.2023r.</time>
+                <time>@post.Created</time>
             </div>
 
             <h1>@post.Title</h1>
@@ -19,7 +19,7 @@
 
             <div class="info">
                 <div>
-                    <h6>Filip Statkiewicz</h6>
+                    <h6>@Regex.Replace(@post.ForumUser.UserName, @"@.*$", " ")</h6>
                 </div>
             </div>
         </div>
@@ -35,19 +35,22 @@
             }
             else
             {
-                <p>You have to be logged in before you can comment.</p>
+                <p>Dodawanie komentarzy możliwe tylko dla zalogowanych użytkowników</p>
             }
                 
         </div>
 
         @foreach (var comment in post.Comments)
-            {
-                <div class="comment">
-                    <h5>@Regex.Replace(@comment.ForumUser.UserName, RegExpPattern, "")</h5>
-                    <time>@comment.Created</time>
-                    <p>@comment.CommentText</p>
-                </div>
-            }
+        {
+            <div class="comment">
+                @if (comment.ForumUser != null)
+                {
+                    <h5>@Regex.Replace(@comment.ForumUser.UserName, @"@.*$", " ")</h5>
+                }
+                <time>@comment.Created</time>
+                <p>@comment.CommentText</p>
+            </div>
+        }
         </div>
 </div>
 
@@ -61,25 +64,12 @@
 @code {
     [Parameter]
     public int id { get; set; }
-    public Forum.Data.Post post;
-    public Comment commentModel = new Comment();
-    public ClaimsPrincipal currentUser  { get; set; }
     public string UserId { get; set; }
+    public ClaimsPrincipal currentUser  { get; set; }
+    public Forum.Data.Post post;
 
-    string RegExpPattern = @"@.*$";
-
-    protected override async Task OnInitializedAsync()
-    {
-        getPost();
-
-        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        currentUser = authState.User;
-
-        @if (SignInManager.IsSignedIn(currentUser))
-        {
-            UserId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
-        }
-    }
+    public Comment commentModel = new Comment();
+    public List<Forum.Data.Post> posts;
 
     public async Task getPost()
     {
@@ -101,7 +91,20 @@
 
         commentModel = new Comment();
 
-        getPost();
+        await getPost();
         StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await getPost();
+
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        currentUser = authState.User;
+
+        @if (SignInManager.IsSignedIn(currentUser))
+        {
+            UserId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
     }
 }

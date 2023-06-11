@@ -24,6 +24,12 @@ namespace Forum.Data
                 .WithMany(u => u.Comments)
                 .HasForeignKey(c => c.PostId)
                 .IsRequired();
+
+            builder.Entity<Post>()
+                .HasOne(c => c.ForumUser)
+                .WithMany(p => p.Posts)
+                .HasForeignKey(k => k.ForumUserId)
+                .IsRequired();
         }
 
         public DbSet<Post> Posts { get; set; }

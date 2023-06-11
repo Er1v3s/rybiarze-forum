@@ -1,0 +1,59 @@
+﻿@page "/article/create-new-post"
+
+<div class="AddPostContainer container">
+    <h3>Dodaj Post</h3>
+    <hr/>
+    <EditForm Model="@postModel" OnValidSubmit="@AddPostToDb">
+        <label class="title">
+            <h4>Tytuł</h4>
+            <InputText class="inputTextArea" @bind-Value="@postModel.Title"/>
+        </label>
+        <label class="introduction">
+            <h4>Krótki opis</h4>
+            <InputText class="inputTextArea" @bind-Value="@postModel.Introduction" />
+        </label>
+        <label class="bodyText">
+            <h4>Treść wpisu</h4>
+            <InputTextArea class="inputTextArea" @bind-Value="@postModel.BodyText" />
+        </label>
+        <button type="submit" class="btn btn-primary">Dodaj post</button>
+    </EditForm>
+    
+</div>
+
+@using Forum.Data
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject AppDbContext _context
+@inject SignInManager<ForumUser> SignInManager
+@code
+{
+    public Forum.Data.Post postModel = new Data.Post();
+    public ClaimsPrincipal currentUser { get; set; }
+    public string UserId { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        currentUser = authState.User;
+
+        @if (SignInManager.IsSignedIn(currentUser))
+        {
+            UserId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+    }
+
+
+    public async Task AddPostToDb()
+    {
+        postModel.ForumUserId = UserId;
+        postModel.Created = DateTime.Now;
+        postModel.Image = "szczupak.webp";
+
+        _context.Posts.Add(postModel);
+        await _context.SaveChangesAsync();
+
+        StateHasChanged();
+    }
+}

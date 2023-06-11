@@ -6,21 +6,21 @@
     @foreach (var post in posts)
     {
         <a href="/article/@post.Id">
-        <div class="row">
-            <div class="col-2">
-                <img class="post-img" src="./img/articleMainImages/@post.Image" />
-            </div>
-            <div class="col-8 post-front-page">
-                <h1>@post.Title</h1>
-                <p>@post.Introduction</p>
-            </div>
-            <div class="col-2 info">
-                <time>12:51 07.06.2023r.</time>
-                <div>
-                    <h6>Filip Statkiewicz</h6>
+            <div class="row">
+                <div class="col-2">
+                    <img class="post-img" src="./img/articleMainImages/@post.Image"/>
+                </div>
+                <div class="col-8 post-front-page">
+                    <h1>@post.Title</h1>
+                    <p>@post.Introduction</p>
+                </div>
+                <div class="col-2 info">
+                    <time>@post.Created</time>
+                    <div>
+                        <h6>@Regex.Replace(@post.ForumUser.UserName, @"@.*$", " ")</h6>
+                    </div>
                 </div>
             </div>
-        </div>
         </a>
 
         <hr/>
@@ -28,12 +28,22 @@
 </div>
 
 @using Forum.Data;
+@using Microsoft.EntityFrameworkCore
+@using System.Text.RegularExpressions
 @inject AppDbContext _context;
 @code {
     public List<Forum.Data.Post> posts;
 
     protected override async Task OnInitializedAsync()
     {
-        posts = _context.Posts.ToList();
+        posts = new List<Forum.Data.Post>();
+        await getPosts();
+    }
+
+    public async Task getPosts()
+    {
+        posts = await _context.Posts
+            .Include(p => p.ForumUser)
+            .ToListAsync();
     }
 }

@@ -10,5 +10,6 @@ namespace Forum.Data;
 public class ForumUser : IdentityUser
 {
     public ICollection<Comment> Comments { get; set; }
+    public ICollection<Post> Posts { get; set; }
 }
 

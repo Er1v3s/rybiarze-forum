@@ -32,9 +32,11 @@
     width: 190px;
     border-radius: 50px;
     justify-content:left;
+    padding-left: 10px;
 }
 
 
-.add-post-btn: {
-    background-color: blue;
+.add-post-btn i,
+.add-post-btn span{
+    color: var(--default-elements-color);
 } 

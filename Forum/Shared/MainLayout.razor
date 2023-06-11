@@ -1,4 +1,19 @@
 ﻿@inherits LayoutComponentBase
+@using System.Security.Claims
+@using Forum.Data
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ForumUser> SignInManager
+@inject AuthenticationStateProvider authenticationStateProvider
+
+@code {
+    public ClaimsPrincipal currentUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        currentUser = authState.User;
+    }
+}
 
 <PageTitle>Forum</PageTitle>
 
@@ -9,11 +24,14 @@
         </article>
     </main>
     
-    <button class="add-post-btn">
-        <i class="fa-solid fa-plus"></i>
-        <span>Dodaj wpis</span>
-    </button>
-    
+    @if (SignInManager.IsSignedIn(currentUser))
+    {
+        <a class="add-post-btn" href="/article/create-new-post">
+            <i class="fa-solid fa-plus"></i>
+            <span>Dodaj wpis</span>
+        </a>
+    }
+
     <footer class="footer">
         <h6 class="footer__copyright">
             Copyright ©2023 All rights reserved | Designed and created by <a href="https://github.com/Er1v3s">Filip Statkiewicz</a>
