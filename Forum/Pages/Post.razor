@@ -1,0 +1,115 @@
+﻿@using Forum.Data;
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using System.Text.RegularExpressions
+@inject AppDbContext _context
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject SignInManager<ForumUser> SignInManager
+
+@page "/article/{id:int}"
+
+<div class="container">
+    <div class="row">
+        <img class="post-card-img" src="./posts/post-images/@post.Image"/>
+        <div class="text">
+            <div class="info">
+                <time>@post.Created</time>
+            </div>
+
+            <h1>@post.Title</h1>
+            <hr/>
+            <h3>@post.Introduction</h3>
+            <hr/>
+            <p>@((MarkupString)post.BodyText)</p>
+
+            <div class="info">
+                <div>
+                    <h6>@Regex.Replace(@post.ForumUser.UserName, @"@.*$", " ")</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="AddCommentContainer">
+            <h3>Dodaj komentarz</h3>
+                
+            @if (SignInManager.IsSignedIn(currentUser))
+            {
+                <EditForm Model="@commentModel" OnValidSubmit="@AddComment">
+                    <InputTextArea class="inputTextArea" @bind-Value="@commentModel.CommentText" />
+                    <button type="submit" class="btn btn-primary">Dodaj komentarz</button>
+                </EditForm>
+            }
+            else
+            {
+                <p>Dodawanie komentarzy możliwe tylko dla zalogowanych użytkowników</p>
+            }
+        </div>
+
+        @foreach (var comment in post.Comments)
+        {
+            <div class="comment">
+                <h5>@Regex.Replace(@comment.ForumUser.UserName, @"@.*$", " ")</h5>
+                <time>@comment.Created</time>
+                <p>@((MarkupString)comment.CommentText)</p>
+            </div>
+        }
+        </div>
+</div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    public string UserId { get; set; }
+    public ClaimsPrincipal currentUser  { get; set; }
+    public Forum.Data.Post post;
+
+    public Comment commentModel = new Comment();
+    public List<Forum.Data.Post> posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await getPost();
+
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        currentUser = authState.User;
+
+        @if (SignInManager.IsSignedIn(currentUser))
+        {
+            UserId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+    }
+
+    public async Task AddComment()
+    {
+
+        commentModel.ForumUserId = UserId;
+        commentModel.PostId = id;
+        commentModel.Created = DateTime.Now;
+
+        try
+        {
+            _context.Comments.Add(commentModel);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            await getPost();
+            StateHasChanged();
+            commentModel = new Comment();
+        }
+    }
+
+    public async Task getPost()
+    {
+        post = _context.Posts
+            .Where(x => x.Id == id)
+            .Include(c => c.Comments)
+            .ThenInclude(f => f.ForumUser)
+            .FirstOrDefault();
+    }
+}

@@ -1,7 +1,14 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import "variables.css";
+@import "nav.css";
+@import "main.css";
+@import "footer.css";
+@import "button.css";
+@import "post.css";
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: Nunito, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--default-site-color);
 }
 
 h1:focus {

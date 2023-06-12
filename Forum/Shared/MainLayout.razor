@@ -1,19 +1,41 @@
 ﻿@inherits LayoutComponentBase
+@using Forum.Data
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ForumUser> SignInManager
+@inject AuthenticationStateProvider authenticationStateProvider
 
 <PageTitle>Forum</PageTitle>
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
+    <main class="main">
         <article class="content px-4">
             @Body
         </article>
     </main>
+    
+    @if (SignInManager.IsSignedIn(currentUser))
+    {
+        <a class="add-post-btn" href="/article/create-new-post">
+            <i class="fa-solid fa-plus"></i>
+            <span>Dodaj wpis</span>
+        </a>
+    }
+
+    <footer class="footer">
+        <h6 class="footer__copyright">
+            Copyright ©2023 All rights reserved | Designed and created by <a href="https://github.com/Er1v3s">Filip Statkiewicz</a>
+        </h6>
+    </footer>
 </div>
+
+
+@code {
+    public ClaimsPrincipal currentUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        currentUser = authState.User;
+    }
+}
