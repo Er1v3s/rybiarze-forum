@@ -1,17 +1,19 @@
 ﻿@using Forum.Data
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Hosting.Internal
 @inject AppDbContext _context
 @inject NavigationManager NavigationManager
 @inject SignInManager<ForumUser> SignInManager
 @inject AuthenticationStateProvider authenticationStateProvider
+@inject IWebHostEnvironment webHostEnvironment
 
 @page "/article/create-new-post"
 
 <div class="AddPostContainer container">
     <h3>Dodaj Post</h3>
     <hr/>
-    <EditForm Model="@postModel" OnValidSubmit="@AddPostToDb">
+    <EditForm Model="@postModel" enctype="multipart/form-data" OnValidSubmit="@AddPostToDb">
         <label class="title">
             <h4>Tytuł</h4>
             <InputText class="inputTextArea" @bind-Value="@postModel.Title"/>
@@ -24,6 +26,10 @@
             <h4>Treść wpisu</h4>
             <InputTextArea class="inputTextArea" @bind-Value="@postModel.BodyText" />
         </label>
+        <label class="image">
+            <h4>Obraz (maksymalny rozmiar 5MB)</h4>
+            <InputFile OnChange="@LoadsFile" multiple></InputFile>
+        </label>
         <button type="submit" class="btn btn-primary">Dodaj post</button>
     </EditForm>
     
@@ -34,9 +40,14 @@
     public Forum.Data.Post postModel = new Data.Post();
     public ClaimsPrincipal currentUser { get; set; }
     public string UserId { get; set; }
+    private List<IBrowserFile> loadedFiles = new();
+    private long maxFileSize = 5242880; // 5 MB
+    private int maxAllowedFiles = 1;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        
+
         var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
         currentUser = authState.User;
 
@@ -46,6 +57,33 @@
         }
     }
 
+    private async Task LoadsFile(InputFileChangeEventArgs e)
+    {
+        loadedFiles.Clear();
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            try
+            {
+                loadedFiles.Add(file);
+
+                var fileName = Path.GetFileNameWithoutExtension(file.Name);
+                var fileExtension = Path.GetExtension(file.Name);
+
+                var trustedFileNameForFileStorage = $"{Path.GetRandomFileName()}{fileExtension}";
+                var path = Path.Combine(webHostEnvironment.WebRootPath, "posts\\post-images", trustedFileNameForFileStorage);
+
+                postModel.Image = trustedFileNameForFileStorage;
+
+                await using FileStream fs = new(path, FileMode.Create);
+                await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(file.Name, ex.Message);
+            }
+        }
+    }
 
     public async Task AddPostToDb()
     {
@@ -53,7 +91,6 @@
         {
             postModel.ForumUserId = UserId;
             postModel.Created = DateTime.Now;
-            postModel.Image = "szczupak.webp";
 
             _context.Posts.Add(postModel);
             await _context.SaveChangesAsync();
