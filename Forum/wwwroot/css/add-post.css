@@ -1,0 +1,58 @@
+﻿
+.AddCommentContainer {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 0px 10px var(--default-elements-color);
+    border-radius: 10px;
+    padding: var(--margin-desktop);
+    background-color: white;
+    margin-bottom: 30px;
+}
+
+    .AddCommentContainer .inputTextArea {
+        display: block;
+        width: 100%;
+        padding: 5px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .AddCommentContainer form button {
+        display: block;
+        width: 100%;
+    }
+
+.AddPostContainer {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 0px 10px var(--default-elements-color);
+    border-radius: 10px;
+    padding: var(--margin-desktop);
+    background-color: white;
+    margin-bottom: 30px;
+}
+
+    .AddPostContainer .inputTextArea {
+        display: block;
+        width: 100%;
+        padding: 5px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .AddPostContainer label {
+        width: 100%;
+    }
+
+    .AddPostContainer .bodyText .inputTextArea {
+        height: 250px;
+    }
+
+    .AddPostContainer form button {
+        display: block;
+        width: 100%;
+    }
+
+    .AddPostContainer .image {
+        margin-bottom: 30px;
+    }
