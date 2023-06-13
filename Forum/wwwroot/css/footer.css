@@ -1,0 +1,31 @@
+﻿.footer {
+    height: 30px;
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-color: var(--default-elements-color);
+    opacity: 0.95;
+    text-align: center;
+    color: var(--default-text-color)
+}
+
+.footer h6 {
+    margin: 0;
+    font-size: var(--small-font-size);
+    padding: 2%;
+    line-height: normal;
+}
+
+.footer a {
+    color: navajowhite;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .footer{
+        height: auto;
+    }
+}

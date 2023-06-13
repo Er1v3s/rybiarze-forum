@@ -1,0 +1,17 @@
+﻿@inject NavigationManager NavigationManager
+
+@page "/post-deleted"
+
+<div class="alert alert-success" role="alert">
+    Pomyślnie usunąłeś post!
+</div>
+
+<button type="button" class="btn btn-primary" @onclick="NavigateToIndex">Powrót</button>
+
+@code {
+
+    private void NavigateToIndex()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
