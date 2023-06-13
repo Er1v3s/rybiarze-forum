@@ -13,25 +13,36 @@
     <h3>Dodaj Post</h3>
     <hr/>
     <EditForm Model="@postModel" enctype="multipart/form-data" OnValidSubmit="@AddPostToDb">
-        <label class="title">
-            <h4>Tytuł</h4>
-            <InputText class="inputTextArea" @bind-Value="@postModel.Title"/>
-        </label>
-        <label class="introduction">
-            <h4>Krótki opis</h4>
-            <InputText class="inputTextArea" @bind-Value="@postModel.Introduction" />
-        </label>
-        <label class="bodyText">
-            <h4>Treść wpisu</h4>
-            <InputTextArea class="inputTextArea" @bind-Value="@postModel.BodyText" />
-        </label>
-        <label class="image">
-            <h4>Obraz (maksymalny rozmiar 5MB)</h4>
-            <InputFile OnChange="@LoadsFile" multiple></InputFile>
-        </label>
+        <div>
+            <label for="validationCustom1" class="form-label">
+                <h4>Tytuł</h4>
+            </label>
+            <InputText id="validationCustom1" class="inputTextArea" @bind-Value="@postModel.Title" required />
+        </div>
+        
+        <div>
+            <label for="validationCustom2" class="form-label">
+                <h4>Krótki opis</h4>
+            </label>
+            <InputText id="validationCustom2" class="inputTextArea" @bind-Value="@postModel.Introduction" required />
+        </div>
+        
+        <div>
+            <label for="validationCustom3" class="form-label">
+                <h4>Treść wpisu</h4>
+            </label>
+            <InputTextArea id="validationCustom3" class="inputTextArea" @bind-Value="@postModel.BodyText" required />
+        </div>
+        
+        <div class="image">
+            <label for="validationCustom4" class="form-label">
+                <h4>Obraz (maksymalny rozmiar 5MB)</h4>
+            </label>
+            <InputFile OnChange="@LoadsFile" id="validationCustom4"></InputFile>
+        </div>
+        
         <button type="submit" class="btn btn-primary">Dodaj post</button>
     </EditForm>
-    
 </div>
 
 @code

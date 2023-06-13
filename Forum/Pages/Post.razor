@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @using System.Text.RegularExpressions
+@using NuGet.Protocol.Plugins
 @inject NavigationManager NavigationManager
 @inject AppDbContext _context
 @inject AuthenticationStateProvider authenticationStateProvider
@@ -42,7 +43,7 @@
                 @if (SignInManager.IsSignedIn(currentUser))
                 {
                     <EditForm Model="@commentModel" OnValidSubmit="@AddComment">
-                        <InputTextArea class="inputTextArea" @bind-Value="@commentModel.CommentText" />
+                        <InputTextArea class="inputTextArea" @bind-Value="@commentModel.CommentText" required/>
                         <button type="submit" class="btn btn-primary">Dodaj komentarz</button>
                     </EditForm>
                 }
@@ -60,7 +61,7 @@
                     <p>@((MarkupString)comment.CommentText)</p>
                     @if (comment.ForumUserId == UserId)
                     {
-                        <button type="button" class="btn btn-danger" @onclick="DeleteComment">Usuń komentarz</button>
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteComment(comment)">Usuń komentarz</button>
                     }
                 </div>
             }
@@ -149,18 +150,14 @@
         }
     }
 
-    private async Task DeleteComment()
+    private async Task DeleteComment(Comment comment)
     {
         try
         {
-            foreach (var comment in post.Comments)
+            if (comment.ForumUserId == UserId)
             {
-                if (comment.ForumUserId == UserId)
-                {
-                    _context.Comments.Remove(comment);
-                }
+                _context.Comments.Remove(comment);
             }
-
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
