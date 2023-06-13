@@ -3,6 +3,8 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @using System.Text.RegularExpressions
+@using NuGet.Protocol.Plugins
+@inject NavigationManager NavigationManager
 @inject AppDbContext _context
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject SignInManager<ForumUser> SignInManager
@@ -11,61 +13,74 @@
 
 <div class="container">
     <div class="row">
-        <img class="post-card-img" src="./posts/post-images/@post.Image"/>
-        <div class="text">
-            <div class="info">
-                <time>@post.Created</time>
-            </div>
+        <img class="post-card-img" src="./posts/post-images/@post.Image" />
+            <div class="text">
+                <div class="info">
+                    <time>@post.Created</time>
+                </div>
 
-            <h1>@post.Title</h1>
-            <hr/>
-            <h3>@post.Introduction</h3>
-            <hr/>
-            <p>@((MarkupString)post.BodyText)</p>
+                <h1>@post.Title</h1>
+                <hr />
+                <h3>@post.Introduction</h3>
+                <hr />
+                <p>@((MarkupString)post.BodyText)</p>
 
-            <div class="info">
-                <div>
-                    <h6>@Regex.Replace(@post.ForumUser.UserName, @"@.*$", " ")</h6>
+                <div class="info">
+                    @if (post.ForumUserId == UserId)
+                    {
+                        <button type="button" class="btn btn-danger" @onclick="DeletePost">Usuń post</button>
+                    }
+
+                    <div>
+                        <h6>@Regex.Replace(@post.ForumUser.UserName, @"@.*$", " ")</h6>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="AddCommentContainer">
-            <h3>Dodaj komentarz</h3>
-                
-            @if (SignInManager.IsSignedIn(currentUser))
-            {
-                <EditForm Model="@commentModel" OnValidSubmit="@AddComment">
-                    <InputTextArea class="inputTextArea" @bind-Value="@commentModel.CommentText" />
-                    <button type="submit" class="btn btn-primary">Dodaj komentarz</button>
-                </EditForm>
-            }
-            else
-            {
-                <p>Dodawanie komentarzy możliwe tylko dla zalogowanych użytkowników</p>
-            }
-        </div>
+            <div class="AddCommentContainer">
+                <h3>Dodaj komentarz</h3>
 
-        @foreach (var comment in post.Comments)
-        {
-            <div class="comment">
-                <h5>@Regex.Replace(@comment.ForumUser.UserName, @"@.*$", " ")</h5>
-                <time>@comment.Created</time>
-                <p>@((MarkupString)comment.CommentText)</p>
+                @if (SignInManager.IsSignedIn(currentUser))
+                {
+                    <EditForm Model="@commentModel" OnValidSubmit="@AddComment">
+                        <InputTextArea class="inputTextArea" @bind-Value="@commentModel.CommentText" required/>
+                        <button type="submit" class="btn btn-primary">Dodaj komentarz</button>
+                    </EditForm>
+                }
+                else
+                {
+                    <p>Dodawanie komentarzy możliwe tylko dla zalogowanych użytkowników</p>
+                }
             </div>
-        }
-        </div>
+
+            @foreach (var comment in post.Comments)
+            {
+                <div class="comment">
+                    <h5>@Regex.Replace(@comment.ForumUser.UserName, @"@.*$", " ")</h5>
+                    <time>@comment.Created</time>
+                    <p>@((MarkupString)comment.CommentText)</p>
+                    @if (comment.ForumUserId == UserId)
+                    {
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteComment(comment)">Usuń komentarz</button>
+                    }
+                </div>
+            }
+    </div>
 </div>
+
+
 
 @code {
     [Parameter]
     public int id { get; set; }
-    public string UserId { get; set; }
-    public ClaimsPrincipal currentUser  { get; set; }
-    public Forum.Data.Post post;
+    private string UserId { get; set; }
+    private ClaimsPrincipal currentUser { get; set; }
+    private Forum.Data.Post post;
 
-    public Comment commentModel = new Comment();
-    public List<Forum.Data.Post> posts;
+    private bool isPostDeleted = false;
+
+    private Comment commentModel = new Comment();
+    private List<Forum.Data.Post> posts;
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,7 +95,7 @@
         }
     }
 
-    public async Task AddComment()
+    private async Task AddComment()
     {
 
         commentModel.ForumUserId = UserId;
@@ -104,7 +119,7 @@
         }
     }
 
-    public async Task getPost()
+    private async Task getPost()
     {
         post = _context.Posts
             .Where(x => x.Id == id)
@@ -112,4 +127,47 @@
             .ThenInclude(f => f.ForumUser)
             .FirstOrDefault();
     }
+
+    private async Task DeletePost()
+    {
+        try
+        {
+            foreach (var comment in post.Comments)
+            {
+                _context.Comments.Remove(comment);
+            }
+
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            NavigationManager.NavigateTo("/post-deleted");
+        }
+    }
+
+    private async Task DeleteComment(Comment comment)
+    {
+        try
+        {
+            if (comment.ForumUserId == UserId)
+            {
+                _context.Comments.Remove(comment);
+            }
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            getPost();
+        }
+    }
+    
 }
